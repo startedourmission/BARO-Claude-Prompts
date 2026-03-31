@@ -21,6 +21,18 @@ body {
   padding: 0 24px;
 }
 
+/* ── ASCII Logo ── */
+.ascii-logo {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  font: 5px/1.1 "SF Mono", ui-monospace, monospace;
+  color: var(--rule);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
 /* ── Hero ── */
 .hero {
   padding: 96px 0 40px;

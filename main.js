@@ -25,7 +25,77 @@ const LOGO = `                   vlllr       1l1
                   î11z    lll1      vlv
                           o1l1`;
 
-document.getElementById('ascii-logo').textContent = LOGO;
+const logoEl = document.getElementById('ascii-logo');
+logoEl.textContent = LOGO;
+
+// ── Pretext: 텍스트가 로고를 피해 리플로우 ──
+let pt = null;
+const FONT = '15.5px "Noto Serif KR", Georgia, "Times New Roman", serif';
+const LH = 28; // 15.5 * 1.8
+
+import('https://esm.sh/@chenglou/pretext@0.0.3').then(m => {
+  pt = m;
+  reflowAll();
+}).catch(() => console.log('Pretext unavailable'));
+
+function reflowAll() {
+  if (!pt) return;
+  const logoRect = logoEl.getBoundingClientRect();
+  if (logoRect.width === 0) return;
+
+  const prompts = document.querySelectorAll('.chapter.active .prompt-text');
+
+  prompts.forEach(el => {
+    const elRect = el.getBoundingClientRect();
+    const overlaps = elRect.bottom > logoRect.top && elRect.top < logoRect.bottom &&
+                     elRect.right > logoRect.left;
+
+    if (!overlaps) {
+      // 겹치지 않으면 원본 복원
+      if (el.dataset.reflowed) {
+        el.textContent = el.dataset.original;
+        delete el.dataset.reflowed;
+      }
+      return;
+    }
+
+    // Pretext layoutNextLine으로 줄마다 다른 너비 적용
+    const original = el.dataset.original || el.textContent;
+    el.dataset.original = original;
+    el.dataset.reflowed = '1';
+
+    const fullW = el.offsetWidth;
+    const logoW = logoRect.width + 20; // gap
+    const prepared = pt.prepareWithSegments(original, FONT, { whiteSpace: 'pre-wrap' });
+    let cursor = { segmentIndex: 0, graphemeIndex: 0 };
+    let y = elRect.top;
+
+    el.innerHTML = '';
+
+    for (let safety = 0; safety < 200; safety++) {
+      const lineHitsLogo = (y + LH > logoRect.top && y < logoRect.bottom);
+      const w = lineHitsLogo ? Math.max(fullW - logoW, 80) : fullW;
+
+      const line = pt.layoutNextLine(prepared, cursor, w);
+      if (!line) break;
+
+      const div = document.createElement('div');
+      div.className = 'reflow-line';
+      div.textContent = line.text;
+      if (lineHitsLogo) div.style.maxWidth = w + 'px';
+      el.appendChild(div);
+
+      cursor = line.end;
+      y += LH;
+    }
+  });
+}
+
+let scrollRaf;
+window.addEventListener('scroll', () => {
+  if (scrollRaf) return;
+  scrollRaf = requestAnimationFrame(() => { reflowAll(); scrollRaf = null; });
+}, { passive: true });
 
 // ── Nav ──
 chapters.forEach(ch => {
@@ -126,12 +196,16 @@ function switchChapter(id) {
   const newChapter = document.getElementById(`chapter-${id}`);
   activeChapter.id = id;
 
-  // Phase 1: 기존 글자 계단식으로 지우기
+  // Phase 1: 기존 글자 계단식으로 지우기 (reflowed 상태 복원 먼저)
+  oldChapter.querySelectorAll('.prompt-text[data-reflowed]').forEach(el => {
+    el.textContent = el.dataset.original;
+    delete el.dataset.reflowed;
+  });
   const oldTexts = oldChapter.querySelectorAll('.prompt-text, .section-title');
   const erasePromises = [];
 
   oldTexts.forEach((el, i) => {
-    const full = el.textContent;
+    const full = el.dataset.original || el.textContent;
     erasePromises.push(new Promise(resolve => {
       setTimeout(() => eraseText(el, full, resolve), i * STAGGER_DELAY);
     }));
@@ -161,6 +235,7 @@ function switchChapter(id) {
 
     Promise.all(typePromises).then(() => {
       transitioning = false;
+      reflowAll();
     });
   });
 }

@@ -21,16 +21,26 @@ body {
   padding: 0 24px;
 }
 
-/* ── ASCII Logo ── */
+/* ── ASCII Logo (sticky, 콘텐츠 안에서 떠다님) ── */
+.logo-anchor {
+  position: sticky;
+  top: 60px;
+  float: right;
+  width: 0;
+  height: 0;
+  overflow: visible;
+  z-index: 2;
+}
+
 .ascii-logo {
-  position: fixed;
-  top: 16px;
-  right: 20px;
-  font: 5px/1.1 "SF Mono", ui-monospace, monospace;
+  position: absolute;
+  right: -24px;
+  top: 0;
+  font: 5.5px/1.15 "SF Mono", ui-monospace, monospace;
   color: #E07A3A;
   pointer-events: none;
   user-select: none;
-  z-index: 0;
+  white-space: pre;
 }
 
 /* ── Hero ── */
@@ -144,10 +154,20 @@ body {
   overflow-wrap: break-word;
 }
 
+.reflow-line {
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 .copy-badge {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-weight: 700;
   color: #E07A3A;
+}
+
+@media (max-width: 800px) {
+  .logo-anchor { display: none; }
 }
 
 @media (max-width: 600px) {

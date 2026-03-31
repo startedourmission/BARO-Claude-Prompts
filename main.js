@@ -160,11 +160,21 @@ function restoreTexts(chapterEl) {
   });
 }
 
-// ── Toast ──
-let t;
+// ── Toast (타이핑) ──
+let toastTimer, toastRaf;
 function showToast(msg) {
-  toastEl.textContent = msg;
+  clearTimeout(toastTimer);
+  cancelAnimationFrame(toastRaf);
+
+  toastEl.textContent = '';
   toastEl.classList.add('show');
-  clearTimeout(t);
-  t = setTimeout(() => toastEl.classList.remove('show'), 1500);
+
+  let i = 0;
+  function tick() {
+    i++;
+    toastEl.textContent = msg.slice(0, i);
+    if (i < msg.length) toastRaf = requestAnimationFrame(tick);
+    else toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1200);
+  }
+  toastRaf = requestAnimationFrame(tick);
 }

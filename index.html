@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BARO Claude Prompts</title>
+  <meta name="description" content="클로드 바로 쓰기 - 책에서 사용된 프롬프트 모음">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Hero -->
+  <header class="hero">
+    <div class="atmosphere atmosphere--left"></div>
+    <div class="atmosphere atmosphere--right"></div>
+    <div class="hero-inner">
+      <p class="hero-eyebrow">Prompt Collection</p>
+      <h1 class="hero-title" id="hero-title">클로드 바로 쓰기</h1>
+      <p class="hero-subtitle">
+        책에서 사용된 모든 프롬프트를 한 곳에 모았습니다.
+        카드를 클릭하면 프롬프트가 복사됩니다.
+      </p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-value" id="stat-chapters">7</span>
+          <span class="hero-stat-label">챕터</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value" id="stat-sections">24</span>
+          <span class="hero-stat-label">섹션</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value" id="stat-prompts">76</span>
+          <span class="hero-stat-label">프롬프트</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-inner" id="nav-inner"></div>
+  </nav>
+
+  <!-- Content -->
+  <main class="content" id="content"></main>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

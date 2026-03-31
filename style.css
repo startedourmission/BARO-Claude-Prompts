@@ -21,26 +21,21 @@ body {
   padding: 0 24px;
 }
 
-/* ── ASCII Logo (sticky, 콘텐츠 안에서 떠다님) ── */
+/* ── ASCII Logo ── */
 .logo-anchor {
-  position: sticky;
-  top: 60px;
-  float: right;
-  width: 0;
-  height: 0;
-  overflow: visible;
-  z-index: 2;
+  display: none;
 }
 
 .ascii-logo {
-  position: absolute;
-  right: -24px;
-  top: 0;
+  position: fixed;
+  top: 56px;
+  right: calc(50% - 350px);
   font: 5.5px/1.15 "SF Mono", ui-monospace, monospace;
   color: #E07A3A;
   pointer-events: none;
   user-select: none;
   white-space: pre;
+  z-index: 0;
 }
 
 /* ── Hero ── */

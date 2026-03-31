@@ -30,63 +30,71 @@ logoEl.textContent = LOGO;
 
 // ── Pretext: 텍스트가 로고를 피해 리플로우 ──
 let pt = null;
-const FONT = '15.5px "Noto Serif KR", Georgia, "Times New Roman", serif';
-const LH = 28; // 15.5 * 1.8
+const REFLOW_FONT = '15.5px "Noto Serif KR", Georgia, "Times New Roman", serif';
+const REFLOW_LH = 28; // 15.5 * 1.8
+const LOGO_VISUAL_W = 165; // 로고 실제 시각 너비 (5.5px mono × ~48 chars)
+const LOGO_GAP = 20;
 
 import('https://esm.sh/@chenglou/pretext@0.0.3').then(m => {
   pt = m;
+  console.log('Pretext loaded — reflow active');
   reflowAll();
 }).catch(() => console.log('Pretext unavailable'));
 
 function reflowAll() {
-  if (!pt) return;
-  const logoRect = logoEl.getBoundingClientRect();
-  if (logoRect.width === 0) return;
+  if (!pt || window.innerWidth <= 800) return;
+
+  // 로고는 fixed: top 56px, 높이 약 125px
+  const logoTop = 56;
+  const logoBottom = 56 + 125;
+  const logoExclusion = LOGO_VISUAL_W + LOGO_GAP;
 
   const prompts = document.querySelectorAll('.chapter.active .prompt-text');
 
   prompts.forEach(el => {
-    const elRect = el.getBoundingClientRect();
-    const overlaps = elRect.bottom > logoRect.top && elRect.top < logoRect.bottom &&
-                     elRect.right > logoRect.left;
+    const rect = el.getBoundingClientRect();
+    const overlaps = rect.bottom > logoTop && rect.top < logoBottom;
 
     if (!overlaps) {
-      // 겹치지 않으면 원본 복원
       if (el.dataset.reflowed) {
         el.textContent = el.dataset.original;
         delete el.dataset.reflowed;
+        delete el.dataset.original;
       }
       return;
     }
 
-    // Pretext layoutNextLine으로 줄마다 다른 너비 적용
     const original = el.dataset.original || el.textContent;
-    el.dataset.original = original;
+    if (!el.dataset.original) el.dataset.original = original;
     el.dataset.reflowed = '1';
 
     const fullW = el.offsetWidth;
-    const logoW = logoRect.width + 20; // gap
-    const prepared = pt.prepareWithSegments(original, FONT, { whiteSpace: 'pre-wrap' });
-    let cursor = { segmentIndex: 0, graphemeIndex: 0 };
-    let y = elRect.top;
+    const narrowW = Math.max(fullW - logoExclusion, 120);
 
-    el.innerHTML = '';
+    try {
+      const prepared = pt.prepareWithSegments(original, REFLOW_FONT);
+      let cursor = { segmentIndex: 0, graphemeIndex: 0 };
+      let y = rect.top;
 
-    for (let safety = 0; safety < 200; safety++) {
-      const lineHitsLogo = (y + LH > logoRect.top && y < logoRect.bottom);
-      const w = lineHitsLogo ? Math.max(fullW - logoW, 80) : fullW;
+      el.innerHTML = '';
 
-      const line = pt.layoutNextLine(prepared, cursor, w);
-      if (!line) break;
+      for (let i = 0; i < 300; i++) {
+        const hitsLogo = (y + REFLOW_LH > logoTop && y < logoBottom);
+        const w = hitsLogo ? narrowW : fullW;
 
-      const div = document.createElement('div');
-      div.className = 'reflow-line';
-      div.textContent = line.text;
-      if (lineHitsLogo) div.style.maxWidth = w + 'px';
-      el.appendChild(div);
+        const line = pt.layoutNextLine(prepared, cursor, w);
+        if (!line) break;
 
-      cursor = line.end;
-      y += LH;
+        const div = document.createElement('div');
+        div.className = 'reflow-line';
+        div.textContent = line.text;
+        el.appendChild(div);
+
+        cursor = line.end;
+        y += REFLOW_LH;
+      }
+    } catch (e) {
+      el.textContent = original;
     }
   });
 }

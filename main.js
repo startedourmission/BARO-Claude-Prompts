@@ -62,14 +62,39 @@ chapters.forEach(ch => {
   contentEl.appendChild(div);
 });
 
-// ── Switch chapter with stagger transition ──
+// ── Character-by-character stagger transition ──
 let transitioning = false;
+const CHARS_PER_FRAME = 12; // 한 프레임당 지울/채울 글자 수
+const STAGGER_DELAY = 30;   // 프롬프트 간 시차(ms)
+
+// 글자를 한 글자씩 지우기 (뒤에서부터)
+function eraseText(el, full, resolve) {
+  let len = full.length;
+  function tick() {
+    len = Math.max(0, len - CHARS_PER_FRAME);
+    el.textContent = full.slice(0, len);
+    if (len > 0) requestAnimationFrame(tick);
+    else resolve();
+  }
+  requestAnimationFrame(tick);
+}
+
+// 글자를 한 글자씩 채우기 (앞에서부터)
+function typeText(el, full, resolve) {
+  let len = 0;
+  function tick() {
+    len = Math.min(full.length, len + CHARS_PER_FRAME);
+    el.textContent = full.slice(0, len);
+    if (len < full.length) requestAnimationFrame(tick);
+    else resolve();
+  }
+  requestAnimationFrame(tick);
+}
 
 function switchChapter(id) {
   if (id === activeChapter.id || transitioning) return;
   transitioning = true;
 
-  // Nav update
   document.querySelectorAll('.nav-pill').forEach(p =>
     p.classList.toggle('active', p.dataset.chapter === id)
   );
@@ -78,52 +103,61 @@ function switchChapter(id) {
   const newChapter = document.getElementById(`chapter-${id}`);
   activeChapter.id = id;
 
-  // Stagger-out: old items slide left
-  const oldItems = oldChapter.querySelectorAll('.section-group, .prompt');
-  const STAGGER = 25;
-  const DURATION = 280;
+  // Phase 1: 기존 글자 계단식으로 지우기
+  const oldTexts = oldChapter.querySelectorAll('.prompt-text, .section-title');
+  const erasePromises = [];
 
-  oldItems.forEach((el, i) => {
-    el.style.transition = `opacity ${DURATION}ms ease, transform ${DURATION}ms ease`;
-    el.style.transitionDelay = `${i * STAGGER}ms`;
-    el.classList.add('exit-left');
+  oldTexts.forEach((el, i) => {
+    const full = el.textContent;
+    erasePromises.push(new Promise(resolve => {
+      setTimeout(() => eraseText(el, full, resolve), i * STAGGER_DELAY);
+    }));
   });
 
-  const outTime = Math.min(oldItems.length * STAGGER, 200) + DURATION;
-
-  setTimeout(() => {
-    oldChapter.classList.remove('active');
-    // Clean up old
-    oldItems.forEach(el => {
-      el.classList.remove('exit-left');
-      el.style.transition = '';
-      el.style.transitionDelay = '';
+  Promise.all(erasePromises).then(() => {
+    // 원문 복원 후 숨기기
+    oldTexts.forEach(el => {
+      const ch = chapters.find(c => oldChapter.id === `chapter-${c.id}`);
+      // textContent는 이미 빈 상태이므로 active만 제거
     });
+    oldChapter.classList.remove('active');
+    restoreTexts(oldChapter);
 
-    // Show new chapter, items start hidden to the right
-    const newItems = newChapter.querySelectorAll('.section-group, .prompt');
-    newItems.forEach(el => el.classList.add('enter-right'));
+    // Phase 2: 새 글자 계단식으로 타이핑
+    const newTexts = newChapter.querySelectorAll('.prompt-text, .section-title');
+    const originals = Array.from(newTexts).map(el => el.textContent);
+    newTexts.forEach(el => el.textContent = '');
     newChapter.classList.add('active');
 
-    // Force reflow then stagger-in
-    void newChapter.offsetHeight;
-
-    newItems.forEach((el, i) => {
-      el.style.transition = `opacity ${DURATION}ms ease, transform ${DURATION}ms ease`;
-      el.style.transitionDelay = `${i * STAGGER}ms`;
-      el.classList.remove('enter-right');
+    const typePromises = [];
+    newTexts.forEach((el, i) => {
+      typePromises.push(new Promise(resolve => {
+        setTimeout(() => typeText(el, originals[i], resolve), i * STAGGER_DELAY);
+      }));
     });
 
-    const inTime = Math.min(newItems.length * STAGGER, 200) + DURATION;
-
-    setTimeout(() => {
-      newItems.forEach(el => {
-        el.style.transition = '';
-        el.style.transitionDelay = '';
-      });
+    Promise.all(typePromises).then(() => {
       transitioning = false;
-    }, inTime);
-  }, outTime);
+    });
+  });
+}
+
+// 숨겨진 챕터의 텍스트를 원본으로 복원
+function restoreTexts(chapterEl) {
+  const chId = chapterEl.id.replace('chapter-', '');
+  const ch = chapters.find(c => c.id === chId);
+  if (!ch) return;
+  const titles = chapterEl.querySelectorAll('.section-title');
+  const texts = chapterEl.querySelectorAll('.prompt-text');
+  let ti = 0, pi = 0;
+  ch.sections.forEach(sec => {
+    if (titles[ti]) titles[ti].textContent = sec.title;
+    ti++;
+    sec.prompts.forEach(p => {
+      if (texts[pi]) texts[pi].textContent = p.text;
+      pi++;
+    });
+  });
 }
 
 // ── Toast ──

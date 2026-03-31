@@ -3,7 +3,6 @@ import { chapters } from './data.js';
 const activeChapter = { id: '01' };
 const navInner = document.getElementById('nav-inner');
 const contentEl = document.getElementById('content');
-const toastEl = document.getElementById('toast');
 
 // ── Nav ──
 chapters.forEach(ch => {
@@ -50,8 +49,9 @@ chapters.forEach(ch => {
       text.textContent = p.text;
       prompt.appendChild(text);
 
-      prompt.addEventListener('click', () => {
-        navigator.clipboard.writeText(p.text).then(() => showToast('복사됨'));
+      prompt.addEventListener('click', (e) => {
+        navigator.clipboard.writeText(p.text);
+        inlineCopied(text, e);
       });
 
       group.appendChild(prompt);
@@ -160,21 +160,49 @@ function restoreTexts(chapterEl) {
   });
 }
 
-// ── Toast (타이핑) ──
-let toastTimer, toastRaf;
-function showToast(msg) {
-  clearTimeout(toastTimer);
-  cancelAnimationFrame(toastRaf);
+// ── 인라인 "복사됨!" 타이핑 ──
+const COPY_MSG = ' 복사됨! ';
+let copyAnimating = false;
 
-  toastEl.textContent = '';
-  toastEl.classList.add('show');
+function inlineCopied(textEl, event) {
+  if (copyAnimating) return;
+  copyAnimating = true;
 
-  let i = 0;
-  function tick() {
-    i++;
-    toastEl.textContent = msg.slice(0, i);
-    if (i < msg.length) toastRaf = requestAnimationFrame(tick);
-    else toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1200);
+  const original = textEl.textContent;
+
+  // 클릭 위치에서 텍스트 내 오프셋 찾기
+  let offset = original.length;
+  const range = document.caretRangeFromPoint?.(event.clientX, event.clientY);
+  if (range && textEl.contains(range.startContainer)) {
+    offset = range.startOffset;
   }
-  toastRaf = requestAnimationFrame(tick);
+
+  const before = original.slice(0, offset);
+  const after = original.slice(offset);
+
+  // Phase 1: "복사됨!" 한 글자씩 타이핑 (글자가 밀림)
+  let i = 0;
+  function typeIn() {
+    i++;
+    textEl.textContent = before + COPY_MSG.slice(0, i) + after;
+    if (i < COPY_MSG.length) requestAnimationFrame(typeIn);
+    else setTimeout(eraseOut, 600);
+  }
+
+  // Phase 2: "복사됨!" 한 글자씩 지우기 (글자가 복구)
+  function eraseOut() {
+    let j = COPY_MSG.length;
+    function tick() {
+      j--;
+      textEl.textContent = before + COPY_MSG.slice(0, j) + after;
+      if (j > 0) requestAnimationFrame(tick);
+      else {
+        textEl.textContent = original;
+        copyAnimating = false;
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  requestAnimationFrame(typeIn);
 }

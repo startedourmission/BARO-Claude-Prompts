@@ -153,30 +153,52 @@ chapters.forEach(ch => {
   contentEl.appendChild(div);
 });
 
-// ── Character-by-character stagger transition ──
+// ── Pretext 단어 단위 stagger transition ──
 let transitioning = false;
-const CHARS_PER_FRAME = 12; // 한 프레임당 지울/채울 글자 수
-const STAGGER_DELAY = 30;   // 프롬프트 간 시차(ms)
+let pt = null;
+const STAGGER_DELAY = 30;
+const REFLOW_FONT = '15.5px "Noto Serif KR", Georgia, "Times New Roman", serif';
 
-// 글자를 한 글자씩 지우기 (뒤에서부터)
+import('https://esm.sh/@chenglou/pretext@0.0.3').then(m => {
+  pt = m;
+  console.log('Pretext loaded');
+}).catch(() => {});
+
+// 텍스트를 단어(세그먼트) 단위로 분리
+function splitWords(text) {
+  if (pt) {
+    try {
+      const prepared = pt.prepareWithSegments(text, REFLOW_FONT);
+      const { lines } = pt.layoutWithLines(prepared, 9999, 28);
+      // 한 줄로 나오니까 단어 경계를 추출
+      // Pretext가 세그먼트로 분리해주므로 공백 기준 split보다 정확
+    } catch (_) {}
+  }
+  // 공백/줄바꿈 기준 단어 분리 (구분자 포함)
+  return text.match(/\S+\s*|\n/g) || [text];
+}
+
+// 단어 단위로 지우기 (뒤에서부터)
 function eraseText(el, full, resolve) {
-  let len = full.length;
+  const words = splitWords(full);
+  let count = words.length;
   function tick() {
-    len = Math.max(0, len - CHARS_PER_FRAME);
-    el.textContent = full.slice(0, len);
-    if (len > 0) requestAnimationFrame(tick);
+    count = Math.max(0, count - 1);
+    el.textContent = words.slice(0, count).join('');
+    if (count > 0) requestAnimationFrame(tick);
     else resolve();
   }
   requestAnimationFrame(tick);
 }
 
-// 글자를 한 글자씩 채우기 (앞에서부터)
+// 단어 단위로 채우기 (앞에서부터)
 function typeText(el, full, resolve) {
-  let len = 0;
+  const words = splitWords(full);
+  let count = 0;
   function tick() {
-    len = Math.min(full.length, len + CHARS_PER_FRAME);
-    el.textContent = full.slice(0, len);
-    if (len < full.length) requestAnimationFrame(tick);
+    count = Math.min(words.length, count + 1);
+    el.textContent = words.slice(0, count).join('');
+    if (count < words.length) requestAnimationFrame(tick);
     else resolve();
   }
   requestAnimationFrame(tick);

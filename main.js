@@ -180,26 +180,33 @@ function inlineCopied(textEl, event) {
   const before = original.slice(0, offset);
   const after = original.slice(offset);
 
-  // Phase 1: "복사됨!" 한 글자씩 타이핑 (글자가 밀림)
+  const span = document.createElement('span');
+  span.className = 'copy-badge';
+
+  function render(msg) {
+    textEl.textContent = '';
+    textEl.appendChild(document.createTextNode(before));
+    span.textContent = msg;
+    textEl.appendChild(span);
+    textEl.appendChild(document.createTextNode(after));
+  }
+
+  // Phase 1: 한 글자씩 타이핑
   let i = 0;
   function typeIn() {
     i++;
-    textEl.textContent = before + COPY_MSG.slice(0, i) + after;
+    render(COPY_MSG.slice(0, i));
     if (i < COPY_MSG.length) requestAnimationFrame(typeIn);
     else setTimeout(eraseOut, 600);
   }
 
-  // Phase 2: "복사됨!" 한 글자씩 지우기 (글자가 복구)
+  // Phase 2: 한 글자씩 지우기
   function eraseOut() {
     let j = COPY_MSG.length;
     function tick() {
       j--;
-      textEl.textContent = before + COPY_MSG.slice(0, j) + after;
-      if (j > 0) requestAnimationFrame(tick);
-      else {
-        textEl.textContent = original;
-        copyAnimating = false;
-      }
+      if (j > 0) { render(COPY_MSG.slice(0, j)); requestAnimationFrame(tick); }
+      else { textEl.textContent = original; copyAnimating = false; }
     }
     requestAnimationFrame(tick);
   }

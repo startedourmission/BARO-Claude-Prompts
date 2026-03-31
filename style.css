@@ -96,8 +96,8 @@ body {
 
 .section-group {
   margin-bottom: 64px;
-  padding-top: 32px;
-  border-top: 1px solid var(--rule);
+  padding-bottom: 64px;
+  border-bottom: 1px solid var(--rule);
 }
 
 .section-title {

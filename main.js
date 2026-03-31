@@ -4,6 +4,89 @@ const activeChapter = { id: '01' };
 const navInner = document.getElementById('nav-inner');
 const contentEl = document.getElementById('content');
 
+// ── ASCII 로고 교대 ──
+const LOGO_A = `   vlllr       1l1
+   vlllll     1llv
+    vlll1j    lllî    jll1
+1lv    1lll1   vll1   rllll1j
+lllllv   jllll  rllv  vllllv
+ v11ll1v1 jllll vllv1llllll
+    r1llllvvllll1l1vlllllv
+       v1llllllllllllllv      îj1l
+          vlllllllllllll1llllll1lv
+1llllllllllllvlllllllllllll1vvr
+           vîîî1lllllllllllv1vvl1v1vr
+            v1lll11lllllllj l11llllll1í
+         lllll1lvllvl1llll1lv
+      v1lll11 î1ll 1l1vlll11l1v
+     j1l1j   vllv  1ll l1llv 111v
+            1llv  v11   îlll1  11lj
+          j111    lll     vll1
+         î11z    lll1      vlv
+                 o1l1`;
+
+const LOGO_B = `     (»»«»«««»««»»»//¬
+ /»«»+                «»»/
+*«««                      »«««««¬
+  (»«     )»                /«««««««««»
+¬«»       ««/    /«»/       »«««««««««««»
+»»                 ««»       ««««««««««««««
+¬»/      •«»                   »««««««««««««««)
+»»«    «» ««•                 «»/»««««««««««««««»
+)»     »«« »«) /«««»          »««»/«««««««««««««««/
+»«     »««»»»»»«««»)          »««««/»«««««««««««««««
+»»«/   ««««»«»»»»/            /««««»»»«««««««««««««»
+/»««   /««»«                   »««««»/»««««««««««««»7
+«« »««»   »«»»»««««»       (»     »«««««««««««««««««««/
+«» /«««»  »«««««««««               »««««« ««««««««««««»
+«»   »««»«»                  »«»     »«««»««««««««««««»
+»«    »««« )««»«»«                    «««»»«««««««««««»
+»»     ¬«»««««««»                     /«««»«««««««««««/
+*»»    »«»««»»«             «»»»/»«»(  »»«««««««««««««
+ /»   »«                »««««««««««««««/»««««««««««««»
+  «»  «»     »  )    «»«««««««««««««««««««««««««««««»/
+  »»/ »»   «««»     »««««««««««««««««««««««««««««««»»
+   (««»/    «(     ««««««««««» /«««««««««««««««««««/
+     «»»          ««««««««««««««««««««««««««««««««)
+      •««         ««««««««««««««««««««««««««««««»
+        »•(      /»«««««««««««««««««««««««««««««
+         (»»(    «««««««««««««««««««««««««««»)
+            )»»/ «««««««««««««««««««««««««/
+               /»««««««««««««««««««««»««
+                     »»»««««««»»»«¬`;
+
+const logoEl = document.getElementById('ascii-logo');
+const logos = [LOGO_A, LOGO_B];
+let logoIdx = 0;
+let logoRaf;
+
+function swapLogo() {
+  const from = logos[logoIdx];
+  const to = logos[1 - logoIdx];
+  logoIdx = 1 - logoIdx;
+
+  // 한 글자씩 지우고 한 글자씩 채우기
+  let len = from.length;
+  function eraseStep() {
+    len = Math.max(0, len - 8);
+    logoEl.textContent = from.slice(0, len);
+    if (len > 0) logoRaf = requestAnimationFrame(eraseStep);
+    else {
+      let ti = 0;
+      function typeStep() {
+        ti = Math.min(to.length, ti + 8);
+        logoEl.textContent = to.slice(0, ti);
+        if (ti < to.length) logoRaf = requestAnimationFrame(typeStep);
+      }
+      logoRaf = requestAnimationFrame(typeStep);
+    }
+  }
+  logoRaf = requestAnimationFrame(eraseStep);
+}
+
+logoEl.textContent = LOGO_A;
+setInterval(swapLogo, 10000);
+
 // ── Nav ──
 chapters.forEach(ch => {
   const btn = document.createElement('button');

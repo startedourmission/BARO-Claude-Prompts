@@ -27,7 +27,7 @@ body {
   top: 16px;
   right: 20px;
   font: 5px/1.1 "SF Mono", ui-monospace, monospace;
-  color: var(--rule);
+  color: #E07A3A;
   pointer-events: none;
   user-select: none;
   z-index: 0;

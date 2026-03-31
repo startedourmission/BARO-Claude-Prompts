@@ -65,23 +65,19 @@ function swapLogo() {
   const to = logos[1 - logoIdx];
   logoIdx = 1 - logoIdx;
 
-  // 한 글자씩 지우고 한 글자씩 채우기
-  let len = from.length;
-  function eraseStep() {
-    len = Math.max(0, len - 8);
-    logoEl.textContent = from.slice(0, len);
-    if (len > 0) logoRaf = requestAnimationFrame(eraseStep);
-    else {
-      let ti = 0;
-      function typeStep() {
-        ti = Math.min(to.length, ti + 8);
-        logoEl.textContent = to.slice(0, ti);
-        if (ti < to.length) logoRaf = requestAnimationFrame(typeStep);
-      }
-      logoRaf = requestAnimationFrame(typeStep);
-    }
+  // 앞에서부터 점진적으로 새 로고 글자로 교체
+  const maxLen = Math.max(from.length, to.length);
+  const padFrom = from.padEnd(maxLen);
+  const padTo = to.padEnd(maxLen);
+  let cursor = 0;
+
+  function morphStep() {
+    cursor = Math.min(maxLen, cursor + 6);
+    logoEl.textContent = padTo.slice(0, cursor) + padFrom.slice(cursor);
+    if (cursor < maxLen) logoRaf = requestAnimationFrame(morphStep);
+    else logoEl.textContent = to;
   }
-  logoRaf = requestAnimationFrame(eraseStep);
+  logoRaf = requestAnimationFrame(morphStep);
 }
 
 logoEl.textContent = LOGO_A;

@@ -183,7 +183,7 @@ function eraseText(el, full, resolve) {
   const words = splitWords(full);
   let count = words.length;
   function tick() {
-    count = Math.max(0, count - 1);
+    count = Math.max(0, count - 3);
     el.textContent = words.slice(0, count).join('');
     if (count > 0) requestAnimationFrame(tick);
     else resolve();
@@ -196,7 +196,7 @@ function typeText(el, full, resolve) {
   const words = splitWords(full);
   let count = 0;
   function tick() {
-    count = Math.min(words.length, count + 1);
+    count = Math.min(words.length, count + 3);
     el.textContent = words.slice(0, count).join('');
     if (count < words.length) requestAnimationFrame(tick);
     else resolve();

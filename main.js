@@ -65,16 +65,27 @@ function swapLogo() {
   const to = logos[1 - logoIdx];
   logoIdx = 1 - logoIdx;
 
-  // 앞에서부터 점진적으로 새 로고 글자로 교체
   const maxLen = Math.max(from.length, to.length);
-  const padFrom = from.padEnd(maxLen);
-  const padTo = to.padEnd(maxLen);
+  const padFrom = [...from.padEnd(maxLen)];
+  const padTo = [...to.padEnd(maxLen)];
+  const buf = [...padFrom];
+
+  // 셔플된 인덱스 — 랜덤 위치에서 동시다발적으로 교체
+  const indices = Array.from({ length: maxLen }, (_, i) => i);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.random() * (i + 1) | 0;
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+
   let cursor = 0;
+  const PER_FRAME = 6;
 
   function morphStep() {
-    cursor = Math.min(maxLen, cursor + 6);
-    logoEl.textContent = padTo.slice(0, cursor) + padFrom.slice(cursor);
-    if (cursor < maxLen) logoRaf = requestAnimationFrame(morphStep);
+    const end = Math.min(indices.length, cursor + PER_FRAME);
+    for (let k = cursor; k < end; k++) buf[indices[k]] = padTo[indices[k]];
+    cursor = end;
+    logoEl.textContent = buf.join('');
+    if (cursor < indices.length) logoRaf = requestAnimationFrame(morphStep);
     else logoEl.textContent = to;
   }
   logoRaf = requestAnimationFrame(morphStep);

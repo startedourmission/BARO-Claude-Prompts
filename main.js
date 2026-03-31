@@ -5,25 +5,42 @@ const navInner = document.getElementById('nav-inner');
 const contentEl = document.getElementById('content');
 
 // ── ASCII 로고 교대 ──
-const LOGO_A = `                   vlllr       1l1
-                   vlllll     1llv
-                    vlll1j    lllî    jll1
-              1lv    1lll1   vll1   rllll1j
-             lllllv   jllll  rllv  vllllv
-              v11ll1v1 jllll vllv1llllll
-                 r1llllvvllll1l1vlllllv
-                    v1llllllllllllllv      îj1l
-                       vlllllllllllll1llllll1lv
-           1llllllllllllvlllllllllllll1vvr
-                    vîîî1lllllllllllv1vvl1v1vr
-                     v1lll11lllllllj l11llllll1í
-                  lllll1lvllvl1llll1lv
-               v1lll11 î1ll 1l1vlll11l1v
-              j1l1j   vllv  1ll l1llv 111v
-                     1llv  v11   îlll1  11lj
-                   j111    lll     vll1
-                  î11z    lll1      vlv
-                          o1l1`;
+const LOGO_A = `                                     ooooot               It
+                                   Itoooooot            Ioooot
+                                   ¤ooooooooI           oooooo
+                                    oooooooooo         ooooooo
+                                     tooooooot         coooooI         ooooot
+                                      toooooooo        ooooot%       Jtooooooo
+                                       tooooooot       tooooo       toooooooot
+                         tooooot        oooooooot      toooot     IooooooooooI
+                         toooooootI      ttooooot¤     ooooo‰    toooooooooo
+                         cooooooooooo     tooooooot   Iooooo   oooooooooooI
+                           IooooooooootI   oooooooot  toooot  tooooooooot
+                              ¤tooooooooot  ItooooooI tooot IooooooooooI
+                                totooooooooo¤Iooooooo‰tooootooooooooot
+                                   rtoooooooootooooooItoooooooooooooo
+                                      tooooooooooooooooooooooooooooI         %totctotIî
+                                         ooooooooooooooooooooooooot  tttoooooooooooooot
+                     t¤%                    ttoooooooooooooooooooooooooooooooooooooooo
+                    oooooooooooooooottottttItIooooooooooooooooooooooooooooootot%î
+                     ttooooooooooooooooooooooooooooooooooooooooooooootI
+                                 zttoottt%tIttooooooooooooooooooootttIIttttttz
+                                            ¤oooooooooooooooooooooooooooooooooooooootI
+                                        ‰ttoooootooooooooooooooto  ¤ottoooooooooooooooo
+                                     %oooooooooIIooooooooooooooooot         Itooooooooo
+                                  toooooooooI otoooottooooooooooooooo              %
+                               toooooooott   otooot Iooootoooooo¤oooooo
+                            ¤tooooooooI     tooott  toooI toooooo Itoooot
+                           toooooooo      ƒoooott   ooot   ooooooo% Itoooot
+                           otooot        toooot    %ooot    ttoooooI  %tooooo
+                                       toooooo     toooo     toooooot    ttooto
+                                      tooooot      tooot       toooooo     otooo
+                                    ttoooto       toooot        toooooot     ‰I
+                                   toooot         tooooI         Iooooot
+                                   oooot          oooot           oooooo
+                                    %‰           toooot
+                                                 toooot
+                                                  ooooI`;
 
 const LOGO_B = `                     (»»«»«««»««»»»//¬
                  /»«»+                «»»/

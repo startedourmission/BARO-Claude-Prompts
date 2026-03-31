@@ -29,47 +29,64 @@ const logoEl = document.getElementById('ascii-logo');
 
 // ── 페이지 로드 시 모든 텍스트 타이핑 ──
 function typeAll() {
-  // 타이핑할 요소들 수집
-  const targets = [
+  // 느린 그룹: 히어로, 네비 (프레임당 1글자)
+  const slow = [
     ...document.querySelectorAll('.hero-eyebrow, .hero-title, .hero-subtitle'),
     ...document.querySelectorAll('.nav-pill'),
+  ];
+  // 빠른 그룹: 본문 (프레임당 18글자)
+  const fast = [
     ...document.querySelectorAll('.chapter.active .section-title, .chapter.active .prompt-meta, .chapter.active .prompt-text'),
   ];
 
-  // 로고도 포함
   const logoText = LOGO;
   logoEl.textContent = '';
 
-  const originals = targets.map(el => {
-    const text = el.textContent;
-    el.textContent = '';
-    return text;
-  });
+  const slowOrig = slow.map(el => { const t = el.textContent; el.textContent = ''; return t; });
+  const fastOrig = fast.map(el => { const t = el.textContent; el.textContent = ''; return t; });
 
   let globalI = 0;
-  const CHARS = 18; // 프레임당 글자 수
+  const SLOW_SPEED = 1;
+  const FAST_SPEED = 18;
+  // 빠른 그룹은 느린 그룹이 어느 정도 진행된 후 시작
+  const FAST_START = 30; // 30프레임 후
 
   function tick() {
     let allDone = true;
 
-    // 로고
+    // 로고: 느린 속도
     if (logoEl.textContent.length < logoText.length) {
-      logoEl.textContent = logoText.slice(0, Math.min(logoText.length, logoEl.textContent.length + CHARS));
+      logoEl.textContent = logoText.slice(0, Math.min(logoText.length, logoEl.textContent.length + 3));
       allDone = false;
     }
 
-    // 나머지 요소들: 순차 시작 (요소마다 약간 딜레이)
-    targets.forEach((el, idx) => {
-      const full = originals[idx];
-      const delay = idx * 2; // 요소마다 2프레임 딜레이
+    // 느린 그룹
+    slow.forEach((el, idx) => {
+      const full = slowOrig[idx];
+      const delay = idx * 8; // 요소마다 8프레임 딜레이
       const progress = Math.max(0, globalI - delay);
-      const len = Math.min(full.length, progress * CHARS);
-
+      const len = Math.min(full.length, progress * SLOW_SPEED);
       if (el.textContent.length < full.length) {
         el.textContent = full.slice(0, len);
         allDone = false;
       }
     });
+
+    // 빠른 그룹
+    if (globalI >= FAST_START) {
+      fast.forEach((el, idx) => {
+        const full = fastOrig[idx];
+        const delay = idx * 2;
+        const progress = Math.max(0, (globalI - FAST_START) - delay);
+        const len = Math.min(full.length, progress * FAST_SPEED);
+        if (el.textContent.length < full.length) {
+          el.textContent = full.slice(0, len);
+          allDone = false;
+        }
+      });
+    } else {
+      allDone = false;
+    }
 
     globalI++;
     if (!allDone) requestAnimationFrame(tick);

@@ -60,32 +60,51 @@ const logos = [LOGO_A, LOGO_B];
 let logoIdx = 0;
 let logoRaf;
 
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.random() * (i + 1) | 0;
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 function swapLogo() {
   const from = logos[logoIdx];
   const to = logos[1 - logoIdx];
   logoIdx = 1 - logoIdx;
 
-  const maxLen = Math.max(from.length, to.length);
-  const padFrom = [...from.padEnd(maxLen)];
-  const padTo = [...to.padEnd(maxLen)];
-  const buf = [...padFrom];
+  // 줄 단위로 정렬, 각 줄 내에서만 랜덤 모프
+  const fromLines = from.split('\n');
+  const toLines = to.split('\n');
+  const lineCount = Math.max(fromLines.length, toLines.length);
 
-  // 셔플된 인덱스 — 랜덤 위치에서 동시다발적으로 교체
-  const indices = Array.from({ length: maxLen }, (_, i) => i);
-  for (let i = indices.length - 1; i > 0; i--) {
-    const j = Math.random() * (i + 1) | 0;
-    [indices[i], indices[j]] = [indices[j], indices[i]];
+  const bufs = [];
+  const allJobs = []; // { line, col }
+
+  for (let r = 0; r < lineCount; r++) {
+    const fl = fromLines[r] || '';
+    const tl = toLines[r] || '';
+    const maxW = Math.max(fl.length, tl.length);
+    bufs[r] = [...fl.padEnd(maxW)];
+    for (let c = 0; c < maxW; c++) {
+      const target = c < tl.length ? tl[c] : ' ';
+      if (bufs[r][c] !== target) allJobs.push({ r, c, ch: target });
+    }
   }
 
+  shuffle(allJobs);
   let cursor = 0;
-  const PER_FRAME = 6;
+  const PER_FRAME = 8;
 
   function morphStep() {
-    const end = Math.min(indices.length, cursor + PER_FRAME);
-    for (let k = cursor; k < end; k++) buf[indices[k]] = padTo[indices[k]];
+    const end = Math.min(allJobs.length, cursor + PER_FRAME);
+    for (let k = cursor; k < end; k++) {
+      const { r, c, ch } = allJobs[k];
+      bufs[r][c] = ch;
+    }
     cursor = end;
-    logoEl.textContent = buf.join('');
-    if (cursor < indices.length) logoRaf = requestAnimationFrame(morphStep);
+    logoEl.textContent = bufs.map(b => b.join('')).join('\n');
+    if (cursor < allJobs.length) logoRaf = requestAnimationFrame(morphStep);
     else logoEl.textContent = to;
   }
   logoRaf = requestAnimationFrame(morphStep);

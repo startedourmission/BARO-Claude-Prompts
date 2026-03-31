@@ -62,15 +62,68 @@ chapters.forEach(ch => {
   contentEl.appendChild(div);
 });
 
-// ── Switch chapter ──
+// ── Switch chapter with stagger transition ──
+let transitioning = false;
+
 function switchChapter(id) {
-  activeChapter.id = id;
+  if (id === activeChapter.id || transitioning) return;
+  transitioning = true;
+
+  // Nav update
   document.querySelectorAll('.nav-pill').forEach(p =>
     p.classList.toggle('active', p.dataset.chapter === id)
   );
-  document.querySelectorAll('.chapter').forEach(c =>
-    c.classList.toggle('active', c.id === `chapter-${id}`)
-  );
+
+  const oldChapter = document.getElementById(`chapter-${activeChapter.id}`);
+  const newChapter = document.getElementById(`chapter-${id}`);
+  activeChapter.id = id;
+
+  // Stagger-out: old items slide left
+  const oldItems = oldChapter.querySelectorAll('.section-group, .prompt');
+  const STAGGER = 25;
+  const DURATION = 280;
+
+  oldItems.forEach((el, i) => {
+    el.style.transition = `opacity ${DURATION}ms ease, transform ${DURATION}ms ease`;
+    el.style.transitionDelay = `${i * STAGGER}ms`;
+    el.classList.add('exit-left');
+  });
+
+  const outTime = Math.min(oldItems.length * STAGGER, 200) + DURATION;
+
+  setTimeout(() => {
+    oldChapter.classList.remove('active');
+    // Clean up old
+    oldItems.forEach(el => {
+      el.classList.remove('exit-left');
+      el.style.transition = '';
+      el.style.transitionDelay = '';
+    });
+
+    // Show new chapter, items start hidden to the right
+    const newItems = newChapter.querySelectorAll('.section-group, .prompt');
+    newItems.forEach(el => el.classList.add('enter-right'));
+    newChapter.classList.add('active');
+
+    // Force reflow then stagger-in
+    void newChapter.offsetHeight;
+
+    newItems.forEach((el, i) => {
+      el.style.transition = `opacity ${DURATION}ms ease, transform ${DURATION}ms ease`;
+      el.style.transitionDelay = `${i * STAGGER}ms`;
+      el.classList.remove('enter-right');
+    });
+
+    const inTime = Math.min(newItems.length * STAGGER, 200) + DURATION;
+
+    setTimeout(() => {
+      newItems.forEach(el => {
+        el.style.transition = '';
+        el.style.transitionDelay = '';
+      });
+      transitioning = false;
+    }, inTime);
+  }, outTime);
 }
 
 // ── Toast ──

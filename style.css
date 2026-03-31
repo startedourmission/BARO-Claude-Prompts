@@ -22,19 +22,14 @@ body {
 }
 
 /* ── ASCII Logo ── */
-.logo-anchor {
-  display: none;
-}
-
 .ascii-logo {
   position: fixed;
-  top: 56px;
-  right: calc(50% - 350px);
-  font: 5.5px/1.15 "SF Mono", ui-monospace, monospace;
+  top: 16px;
+  right: 20px;
+  font: 5px/1.1 "SF Mono", ui-monospace, monospace;
   color: #E07A3A;
   pointer-events: none;
   user-select: none;
-  white-space: pre;
   z-index: 0;
 }
 
@@ -149,20 +144,10 @@ body {
   overflow-wrap: break-word;
 }
 
-.reflow-line {
-  white-space: normal;
-  word-break: keep-all;
-  overflow-wrap: break-word;
-}
-
 .copy-badge {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-weight: 700;
   color: #E07A3A;
-}
-
-@media (max-width: 800px) {
-  .logo-anchor { display: none; }
 }
 
 @media (max-width: 600px) {

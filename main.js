@@ -25,85 +25,7 @@ const LOGO = `                   vlllr       1l1
                   î11z    lll1      vlv
                           o1l1`;
 
-const logoEl = document.getElementById('ascii-logo');
-logoEl.textContent = LOGO;
-
-// ── Pretext: 텍스트가 로고를 피해 리플로우 ──
-let pt = null;
-const REFLOW_FONT = '15.5px "Noto Serif KR", Georgia, "Times New Roman", serif';
-const REFLOW_LH = 28; // 15.5 * 1.8
-const LOGO_VISUAL_W = 165; // 로고 실제 시각 너비 (5.5px mono × ~48 chars)
-const LOGO_GAP = 20;
-
-import('https://esm.sh/@chenglou/pretext@0.0.3').then(m => {
-  pt = m;
-  console.log('Pretext loaded — reflow active');
-  reflowAll();
-}).catch(() => console.log('Pretext unavailable'));
-
-function reflowAll() {
-  if (!pt || window.innerWidth <= 800) return;
-
-  // 로고는 fixed: top 56px, 높이 약 125px
-  const logoTop = 56;
-  const logoBottom = 56 + 125;
-  const logoExclusion = LOGO_VISUAL_W + LOGO_GAP;
-
-  const prompts = document.querySelectorAll('.chapter.active .prompt-text');
-
-  prompts.forEach(el => {
-    const rect = el.getBoundingClientRect();
-    const overlaps = rect.bottom > logoTop && rect.top < logoBottom;
-
-    if (!overlaps) {
-      if (el.dataset.reflowed) {
-        el.textContent = el.dataset.original;
-        delete el.dataset.reflowed;
-        delete el.dataset.original;
-      }
-      return;
-    }
-
-    const original = el.dataset.original || el.textContent;
-    if (!el.dataset.original) el.dataset.original = original;
-    el.dataset.reflowed = '1';
-
-    const fullW = el.offsetWidth;
-    const narrowW = Math.max(fullW - logoExclusion, 120);
-
-    try {
-      const prepared = pt.prepareWithSegments(original, REFLOW_FONT);
-      let cursor = { segmentIndex: 0, graphemeIndex: 0 };
-      let y = rect.top;
-
-      el.innerHTML = '';
-
-      for (let i = 0; i < 300; i++) {
-        const hitsLogo = (y + REFLOW_LH > logoTop && y < logoBottom);
-        const w = hitsLogo ? narrowW : fullW;
-
-        const line = pt.layoutNextLine(prepared, cursor, w);
-        if (!line) break;
-
-        const div = document.createElement('div');
-        div.className = 'reflow-line';
-        div.textContent = line.text;
-        el.appendChild(div);
-
-        cursor = line.end;
-        y += REFLOW_LH;
-      }
-    } catch (e) {
-      el.textContent = original;
-    }
-  });
-}
-
-let scrollRaf;
-window.addEventListener('scroll', () => {
-  if (scrollRaf) return;
-  scrollRaf = requestAnimationFrame(() => { reflowAll(); scrollRaf = null; });
-}, { passive: true });
+document.getElementById('ascii-logo').textContent = LOGO;
 
 // ── Nav ──
 chapters.forEach(ch => {
@@ -204,16 +126,12 @@ function switchChapter(id) {
   const newChapter = document.getElementById(`chapter-${id}`);
   activeChapter.id = id;
 
-  // Phase 1: 기존 글자 계단식으로 지우기 (reflowed 상태 복원 먼저)
-  oldChapter.querySelectorAll('.prompt-text[data-reflowed]').forEach(el => {
-    el.textContent = el.dataset.original;
-    delete el.dataset.reflowed;
-  });
+  // Phase 1: 기존 글자 계단식으로 지우기
   const oldTexts = oldChapter.querySelectorAll('.prompt-text, .section-title');
   const erasePromises = [];
 
   oldTexts.forEach((el, i) => {
-    const full = el.dataset.original || el.textContent;
+    const full = el.textContent;
     erasePromises.push(new Promise(resolve => {
       setTimeout(() => eraseText(el, full, resolve), i * STAGGER_DELAY);
     }));
@@ -243,7 +161,6 @@ function switchChapter(id) {
 
     Promise.all(typePromises).then(() => {
       transitioning = false;
-      reflowAll();
     });
   });
 }

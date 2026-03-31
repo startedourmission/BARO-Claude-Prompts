@@ -25,7 +25,58 @@ const LOGO = `                   vlllr       1l1
                   î11z    lll1      vlv
                           o1l1`;
 
-document.getElementById('ascii-logo').textContent = LOGO;
+const logoEl = document.getElementById('ascii-logo');
+
+// ── 페이지 로드 시 모든 텍스트 타이핑 ──
+function typeAll() {
+  // 타이핑할 요소들 수집
+  const targets = [
+    ...document.querySelectorAll('.hero-eyebrow, .hero-title, .hero-subtitle'),
+    ...document.querySelectorAll('.nav-pill'),
+    ...document.querySelectorAll('.chapter.active .section-title, .chapter.active .prompt-meta, .chapter.active .prompt-text'),
+  ];
+
+  // 로고도 포함
+  const logoText = LOGO;
+  logoEl.textContent = '';
+
+  const originals = targets.map(el => {
+    const text = el.textContent;
+    el.textContent = '';
+    return text;
+  });
+
+  let globalI = 0;
+  const CHARS = 18; // 프레임당 글자 수
+
+  function tick() {
+    let allDone = true;
+
+    // 로고
+    if (logoEl.textContent.length < logoText.length) {
+      logoEl.textContent = logoText.slice(0, Math.min(logoText.length, logoEl.textContent.length + CHARS));
+      allDone = false;
+    }
+
+    // 나머지 요소들: 순차 시작 (요소마다 약간 딜레이)
+    targets.forEach((el, idx) => {
+      const full = originals[idx];
+      const delay = idx * 2; // 요소마다 2프레임 딜레이
+      const progress = Math.max(0, globalI - delay);
+      const len = Math.min(full.length, progress * CHARS);
+
+      if (el.textContent.length < full.length) {
+        el.textContent = full.slice(0, len);
+        allDone = false;
+      }
+    });
+
+    globalI++;
+    if (!allDone) requestAnimationFrame(tick);
+  }
+
+  requestAnimationFrame(tick);
+}
 
 // ── Nav ──
 chapters.forEach(ch => {
@@ -236,3 +287,6 @@ function inlineCopied(textEl, event) {
 
   requestAnimationFrame(typeIn);
 }
+
+// ── 페이지 로드 시 타이핑 시작 ──
+typeAll();

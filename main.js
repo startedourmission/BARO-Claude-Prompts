@@ -4,131 +4,28 @@ const activeChapter = { id: '01' };
 const navInner = document.getElementById('nav-inner');
 const contentEl = document.getElementById('content');
 
-// ── ASCII 로고 교대 ──
-const LOGO_A = `                                     ooooot               It
-                                   Itoooooot            Ioooot
-                                   ¤ooooooooI           oooooo
-                                    oooooooooo         ooooooo
-                                     tooooooot         coooooI         ooooot
-                                      toooooooo        ooooot%       Jtooooooo
-                                       tooooooot       tooooo       toooooooot
-                         tooooot        oooooooot      toooot     IooooooooooI
-                         toooooootI      ttooooot¤     ooooo‰    toooooooooo
-                         cooooooooooo     tooooooot   Iooooo   oooooooooooI
-                           IooooooooootI   oooooooot  toooot  tooooooooot
-                              ¤tooooooooot  ItooooooI tooot IooooooooooI
-                                totooooooooo¤Iooooooo‰tooootooooooooot
-                                   rtoooooooootooooooItoooooooooooooo
-                                      tooooooooooooooooooooooooooooI         %totctotIî
-                                         ooooooooooooooooooooooooot  tttoooooooooooooot
-                     t¤%                    ttoooooooooooooooooooooooooooooooooooooooo
-                    oooooooooooooooottottttItIooooooooooooooooooooooooooooootot%î
-                     ttooooooooooooooooooooooooooooooooooooooooooooootI
-                                 zttoottt%tIttooooooooooooooooooootttIIttttttz
-                                            ¤oooooooooooooooooooooooooooooooooooooootI
-                                        ‰ttoooootooooooooooooooto  ¤ottoooooooooooooooo
-                                     %oooooooooIIooooooooooooooooot         Itooooooooo
-                                  toooooooooI otoooottooooooooooooooo              %
-                               toooooooott   otooot Iooootoooooo¤oooooo
-                            ¤tooooooooI     tooott  toooI toooooo Itoooot
-                           toooooooo      ƒoooott   ooot   ooooooo% Itoooot
-                           otooot        toooot    %ooot    ttoooooI  %tooooo
-                                       toooooo     toooo     toooooot    ttooto
-                                      tooooot      tooot       toooooo     otooo
-                                    ttoooto       toooot        toooooot     ‰I
-                                   toooot         tooooI         Iooooot
-                                   oooot          oooot           oooooo
-                                    %‰           toooot
-                                                 toooot
-                                                  ooooI`;
+// ── ASCII 로고 ──
+const LOGO = `                   vlllr       1l1
+                   vlllll     1llv
+                    vlll1j    lllî    jll1
+              1lv    1lll1   vll1   rllll1j
+             lllllv   jllll  rllv  vllllv
+              v11ll1v1 jllll vllv1llllll
+                 r1llllvvllll1l1vlllllv
+                    v1llllllllllllllv      îj1l
+                       vlllllllllllll1llllll1lv
+           1llllllllllllvlllllllllllll1vvr
+                    vîîî1lllllllllllv1vvl1v1vr
+                     v1lll11lllllllj l11llllll1í
+                  lllll1lvllvl1llll1lv
+               v1lll11 î1ll 1l1vlll11l1v
+              j1l1j   vllv  1ll l1llv 111v
+                     1llv  v11   îlll1  11lj
+                   j111    lll     vll1
+                  î11z    lll1      vlv
+                          o1l1`;
 
-const LOGO_B = `                     (»»«»«««»««»»»//¬
-                 /»«»+                «»»/
-             *«««                      »«««««¬
-           (»«     )»                /«««««««««»
-         ¬«»       ««/    /«»/       »«««««««««««»
-        »»                 ««»       ««««««««««««««
-      ¬»/      •«»                   »««««««««««««««)
-     »»«    «» ««•                 «»/»««««««««««««««»
-    )»     »«« »«) /«««»          »««»/«««««««««««««««/
-    »«     »««»»»»»«««»)          »««««/»«««««««««««««««
-   »»«/   ««««»«»»»»/            /««««»»»«««««««««««««»
-  /»««   /««»«                   »««««»/»««««««««««««»7
-  «« »««»   »«»»»««««»       (»     »«««««««««««««««««««/
-  «» /«««»  »«««««««««               »««««« ««««««««««««»
-  «»   »««»«»                  »«»     »«««»««««««««««««»
-  »«    »««« )««»«»«                    «««»»«««««««««««»
-  »»     ¬«»««««««»                     /«««»«««««««««««/
-  *»»    »«»««»»«             «»»»/»«»(  »»«««««««««««««
-   /»   »«                »««««««««««««««/»««««««««««««»
-    «»  «»     »  )    «»«««««««««««««««««««««««««««««»/
-    »»/ »»   «««»     »««««««««««««««««««««««««««««««»»
-     (««»/    «(     ««««««««««» /«««««««««««««««««««/
-       «»»          ««««««««««««««««««««««««««««««««)
-        •««         ««««««««««««««««««««««««««««««»
-          »•(      /»«««««««««««««««««««««««««««««
-           (»»(    «««««««««««««««««««««««««««»)
-              )»»/ «««««««««««««««««««««««««/
-                 /»««««««««««««««««««««»««
-                       »»»««««««»»»«¬`;
-
-const logoEl = document.getElementById('ascii-logo');
-const logos = [LOGO_A, LOGO_B];
-let logoIdx = 0;
-let logoRaf;
-
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.random() * (i + 1) | 0;
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-function swapLogo() {
-  const from = logos[logoIdx];
-  const to = logos[1 - logoIdx];
-  logoIdx = 1 - logoIdx;
-
-  // 줄 단위로 정렬, 각 줄 내에서만 랜덤 모프
-  const fromLines = from.split('\n');
-  const toLines = to.split('\n');
-  const lineCount = Math.max(fromLines.length, toLines.length);
-
-  const bufs = [];
-  const allJobs = []; // { line, col }
-
-  for (let r = 0; r < lineCount; r++) {
-    const fl = fromLines[r] || '';
-    const tl = toLines[r] || '';
-    const maxW = Math.max(fl.length, tl.length);
-    bufs[r] = [...fl.padEnd(maxW)];
-    for (let c = 0; c < maxW; c++) {
-      const target = c < tl.length ? tl[c] : ' ';
-      if (bufs[r][c] !== target) allJobs.push({ r, c, ch: target });
-    }
-  }
-
-  shuffle(allJobs);
-  let cursor = 0;
-  const PER_FRAME = 8;
-
-  function morphStep() {
-    const end = Math.min(allJobs.length, cursor + PER_FRAME);
-    for (let k = cursor; k < end; k++) {
-      const { r, c, ch } = allJobs[k];
-      bufs[r][c] = ch;
-    }
-    cursor = end;
-    logoEl.textContent = bufs.map(b => b.join('')).join('\n');
-    if (cursor < allJobs.length) logoRaf = requestAnimationFrame(morphStep);
-    else logoEl.textContent = to;
-  }
-  logoRaf = requestAnimationFrame(morphStep);
-}
-
-logoEl.textContent = LOGO_A;
-setInterval(swapLogo, 10000);
+document.getElementById('ascii-logo').textContent = LOGO;
 
 // ── Nav ──
 chapters.forEach(ch => {

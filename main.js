@@ -30,12 +30,9 @@ chapters.forEach(ch => {
     title.textContent = section.title;
     group.appendChild(title);
 
-    const list = document.createElement('div');
-    list.className = 'prompt-list';
-
     section.prompts.forEach(p => {
-      const item = document.createElement('div');
-      item.className = 'prompt-item';
+      const prompt = document.createElement('div');
+      prompt.className = 'prompt';
 
       const meta = [];
       if (p.baro) meta.push(`바로 ${p.baro}`);
@@ -45,22 +42,20 @@ chapters.forEach(ch => {
         const metaEl = document.createElement('div');
         metaEl.className = 'prompt-meta';
         metaEl.textContent = meta.join(' · ');
-        item.appendChild(metaEl);
+        prompt.appendChild(metaEl);
       }
 
       const text = document.createElement('div');
       text.className = 'prompt-text';
       text.textContent = p.text;
-      item.appendChild(text);
+      prompt.appendChild(text);
 
-      item.addEventListener('click', () => {
+      prompt.addEventListener('click', () => {
         navigator.clipboard.writeText(p.text).then(() => showToast('복사됨'));
       });
 
-      list.appendChild(item);
+      group.appendChild(prompt);
     });
-
-    group.appendChild(list);
     div.appendChild(group);
   });
 

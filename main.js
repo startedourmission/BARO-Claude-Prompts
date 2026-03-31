@@ -195,7 +195,7 @@ function switchChapter(id) {
   activeChapter.id = id;
 
   // Phase 1: 기존 글자 계단식으로 지우기
-  const oldTexts = oldChapter.querySelectorAll('.prompt-text, .section-title');
+  const oldTexts = oldChapter.querySelectorAll('.prompt-text, .prompt-meta, .section-title');
   const erasePromises = [];
 
   oldTexts.forEach((el, i) => {
@@ -215,7 +215,7 @@ function switchChapter(id) {
     restoreTexts(oldChapter);
 
     // Phase 2: 새 글자 계단식으로 타이핑
-    const newTexts = newChapter.querySelectorAll('.prompt-text, .section-title');
+    const newTexts = newChapter.querySelectorAll('.prompt-text, .prompt-meta, .section-title');
     const originals = Array.from(newTexts).map(el => el.textContent);
     newTexts.forEach(el => el.textContent = '');
     newChapter.classList.add('active');
@@ -239,12 +239,17 @@ function restoreTexts(chapterEl) {
   const ch = chapters.find(c => c.id === chId);
   if (!ch) return;
   const titles = chapterEl.querySelectorAll('.section-title');
+  const metas = chapterEl.querySelectorAll('.prompt-meta');
   const texts = chapterEl.querySelectorAll('.prompt-text');
-  let ti = 0, pi = 0;
+  let ti = 0, mi = 0, pi = 0;
   ch.sections.forEach(sec => {
     if (titles[ti]) titles[ti].textContent = sec.title;
     ti++;
     sec.prompts.forEach(p => {
+      const meta = [];
+      if (p.baro) meta.push(`바로 ${p.baro}`);
+      if (p.step) meta.push(p.step);
+      if (meta.length && metas[mi]) { metas[mi].textContent = meta.join(' · '); mi++; }
       if (texts[pi]) texts[pi].textContent = p.text;
       pi++;
     });

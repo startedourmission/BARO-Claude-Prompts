@@ -324,10 +324,11 @@ function inlineCopied(textEl, event) {
 
 // ── 설치 명령어 클릭 복사 ──
 const installCmd = document.getElementById('install-cmd');
-if (installCmd) {
-  installCmd.addEventListener('click', () => {
+const installBox = installCmd?.closest('.hero-install');
+if (installBox && installCmd) {
+  installBox.addEventListener('click', (e) => {
     navigator.clipboard.writeText(installCmd.textContent);
-    inlineCopied(installCmd, event);
+    inlineCopied(installCmd, e);
   });
 }
 

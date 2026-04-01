@@ -49,7 +49,6 @@ body {
 .hero-eyebrow a {
   color: var(--muted);
   text-decoration: none;
-  margin-left: 12px;
   transition: color 120ms;
 }
 

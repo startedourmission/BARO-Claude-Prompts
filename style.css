@@ -39,11 +39,10 @@ body {
 }
 
 .hero-eyebrow {
-  font: 500 11px/1 "SF Mono", ui-monospace, monospace;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font: 500 13px/1.8 "SF Mono", ui-monospace, monospace;
+  letter-spacing: 0.06em;
   color: var(--muted);
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .hero-eyebrow a {

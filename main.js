@@ -178,17 +178,10 @@ function splitWords(text) {
   return text.match(/\S+\s*|\n/g) || [text];
 }
 
-// 단어 단위로 지우기 (뒤에서부터)
+// 한번에 지우기
 function eraseText(el, full, resolve) {
-  const words = splitWords(full);
-  let count = words.length;
-  function tick() {
-    count = Math.max(0, count - 3);
-    el.textContent = words.slice(0, count).join('');
-    if (count > 0) requestAnimationFrame(tick);
-    else resolve();
-  }
-  requestAnimationFrame(tick);
+  el.textContent = '';
+  resolve();
 }
 
 // 단어 단위로 채우기 (앞에서부터)

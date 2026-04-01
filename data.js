@@ -4,27 +4,17 @@ export const chapters = [
     title: "설치",
     sections: [
       {
-        title: "macOS / Linux",
+        title: "클로드 코드 설치",
         prompts: [
-          { baro: null, step: null, text: "curl -fsSL https://claude.ai/install.sh | bash" },
+          { baro: null, step: "macOS / Linux", text: "curl -fsSL https://claude.ai/install.sh | bash" },
+          { baro: null, step: "Windows", text: "irm https://claude.ai/install.ps1 | iex" },
+          { baro: null, step: "npm", text: "npm install -g @anthropic-ai/claude-code" },
         ]
       },
       {
-        title: "Windows",
+        title: "트러블슈팅",
         prompts: [
-          { baro: null, step: null, text: "irm https://claude.ai/install.ps1 | iex" },
-        ]
-      },
-      {
-        title: "npm",
-        prompts: [
-          { baro: null, step: null, text: "npm install -g @anthropic-ai/claude-code" },
-        ]
-      },
-      {
-        title: "트러블슈팅 (macOS)",
-        prompts: [
-          { baro: null, step: "PATH 설정", text: "echo 'export PATH=\"$HOME/.local/bin:$PATH\"' >> ~/.zshrc && source ~/.zshrc" },
+          { baro: null, step: "macOS PATH 설정", text: "echo 'export PATH=\"$HOME/.local/bin:$PATH\"' >> ~/.zshrc && source ~/.zshrc" },
         ]
       }
     ]

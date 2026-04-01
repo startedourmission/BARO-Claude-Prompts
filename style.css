@@ -46,6 +46,17 @@ body {
   margin-bottom: 16px;
 }
 
+.hero-eyebrow a {
+  color: var(--muted);
+  text-decoration: none;
+  margin-left: 12px;
+  transition: color 120ms;
+}
+
+.hero-eyebrow a:hover {
+  color: var(--ink);
+}
+
 .hero-title {
   font-size: 42px;
   font-weight: 700;

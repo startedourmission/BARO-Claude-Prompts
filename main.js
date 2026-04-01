@@ -322,6 +322,15 @@ function inlineCopied(textEl, event) {
   requestAnimationFrame(typeIn);
 }
 
+// ── 설치 명령어 클릭 복사 ──
+const installCmd = document.getElementById('install-cmd');
+if (installCmd) {
+  installCmd.addEventListener('click', () => {
+    navigator.clipboard.writeText(installCmd.textContent);
+    inlineCopied(installCmd, event);
+  });
+}
+
 // ── 페이지 로드 시 타이핑 시작 ──
 typeAll();
 

@@ -48,19 +48,12 @@ body {
 .book-link {
   color: var(--muted);
   text-decoration: none;
-  background-image: linear-gradient(var(--ink), var(--ink));
-  background-size: 0% 1px;
-  background-position: 0 100%;
-  background-repeat: no-repeat;
-  transition: background-size 5s ease;
-}
-
-.book-link.reveal {
-  background-size: 100% 1px;
+  border-bottom: 1px dashed var(--muted);
 }
 
 .book-link:hover {
   color: var(--ink);
+  border-bottom-color: var(--ink);
 }
 
 .hero-eyebrow a {

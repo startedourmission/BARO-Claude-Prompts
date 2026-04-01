@@ -31,7 +31,7 @@ const logoEl = document.getElementById('ascii-logo');
 function typeAll() {
   // 느린 그룹: 히어로, 네비 (프레임당 1글자)
   const slow = [
-    ...document.querySelectorAll('.hero-eyebrow, .hero-title, .hero-subtitle'),
+    ...document.querySelectorAll('.hero-title, .hero-subtitle'),
     ...document.querySelectorAll('.nav-pill'),
   ];
   // 빠른 그룹: 본문 (프레임당 18글자)

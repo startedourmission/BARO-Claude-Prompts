@@ -136,8 +136,9 @@ chapters.forEach(ch => {
         prompt.appendChild(metaEl);
       }
 
-      const text = document.createElement('div');
-      text.className = 'prompt-text';
+      const isCode = ch.id === '00';
+      const text = document.createElement(isCode ? 'code' : 'div');
+      text.className = isCode ? 'prompt-code' : 'prompt-text';
       text.textContent = p.text;
       prompt.appendChild(text);
 

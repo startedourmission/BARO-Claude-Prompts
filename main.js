@@ -190,6 +190,7 @@ function typeText(el, full, resolve) {
   const words = splitWords(full);
   let count = 0;
   function tick() {
+    if (abortTyping) { el.textContent = full; resolve(); return; }
     count = Math.min(words.length, count + 3);
     el.textContent = words.slice(0, count).join('');
     if (count < words.length) requestAnimationFrame(tick);
@@ -198,9 +199,18 @@ function typeText(el, full, resolve) {
   requestAnimationFrame(tick);
 }
 
+let abortTyping = false;
+
 function switchChapter(id) {
-  if (id === activeChapter.id || transitioning) return;
+  if (id === activeChapter.id) return;
+  if (transitioning) {
+    // 타이핑 중이면 중단하고 현재 챕터 텍스트 즉시 복원
+    abortTyping = true;
+    const curChapter = document.getElementById(`chapter-${activeChapter.id}`);
+    restoreTexts(curChapter);
+  }
   transitioning = true;
+  abortTyping = false;
 
   document.querySelectorAll('.nav-pill').forEach(p =>
     p.classList.toggle('active', p.dataset.chapter === id)

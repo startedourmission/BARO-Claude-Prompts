@@ -90,10 +90,7 @@ function typeAll() {
 
     globalI++;
     if (!allDone) requestAnimationFrame(tick);
-    else {
-      const bookLink = document.getElementById('book-link');
-      if (bookLink) setTimeout(() => bookLink.classList.add('reveal'), 300);
-    }
+    else {}
   }
 
   requestAnimationFrame(tick);
@@ -317,3 +314,9 @@ function inlineCopied(textEl, event) {
 
 // ── 페이지 로드 시 타이핑 시작 ──
 typeAll();
+
+// ── 6초 후 "이 책" 밑줄 reveal ──
+setTimeout(() => {
+  const bookLink = document.getElementById('book-link');
+  if (bookLink) bookLink.classList.add('reveal');
+}, 6000);

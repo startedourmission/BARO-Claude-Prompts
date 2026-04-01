@@ -1,5 +1,35 @@
 export const chapters = [
   {
+    id: "00",
+    title: "설치",
+    sections: [
+      {
+        title: "macOS / Linux",
+        prompts: [
+          { baro: null, step: null, text: "curl -fsSL https://claude.ai/install.sh | bash" },
+        ]
+      },
+      {
+        title: "Windows",
+        prompts: [
+          { baro: null, step: null, text: "irm https://claude.ai/install.ps1 | iex" },
+        ]
+      },
+      {
+        title: "npm",
+        prompts: [
+          { baro: null, step: null, text: "npm install -g @anthropic-ai/claude-code" },
+        ]
+      },
+      {
+        title: "트러블슈팅 (macOS)",
+        prompts: [
+          { baro: null, step: "PATH 설정", text: "echo 'export PATH=\"$HOME/.local/bin:$PATH\"' >> ~/.zshrc && source ~/.zshrc" },
+        ]
+      }
+    ]
+  },
+  {
     id: "01",
     title: "클로드 시작하기",
     sections: [

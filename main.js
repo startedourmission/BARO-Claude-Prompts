@@ -1,6 +1,6 @@
 import { chapters } from './data.js';
 
-const activeChapter = { id: '01' };
+const activeChapter = { id: '00' };
 const navInner = document.getElementById('nav-inner');
 const contentEl = document.getElementById('content');
 
@@ -100,7 +100,7 @@ function typeAll() {
 chapters.forEach(ch => {
   const btn = document.createElement('button');
   btn.className = `nav-pill${ch.id === activeChapter.id ? ' active' : ''}`;
-  btn.textContent = `${ch.id}장 ${ch.title}`;
+  btn.textContent = ch.id === '00' ? ch.title : `${ch.id}장 ${ch.title}`;
   btn.dataset.chapter = ch.id;
   btn.addEventListener('click', () => switchChapter(ch.id));
   navInner.appendChild(btn);
@@ -320,16 +320,6 @@ function inlineCopied(textEl, event) {
   }
 
   requestAnimationFrame(typeIn);
-}
-
-// ── 설치 명령어 클릭 복사 ──
-const installCmd = document.getElementById('install-cmd');
-const installBox = installCmd?.closest('.hero-install');
-if (installBox && installCmd) {
-  installBox.addEventListener('click', (e) => {
-    navigator.clipboard.writeText(installCmd.textContent);
-    inlineCopied(installCmd, e);
-  });
 }
 
 // ── 페이지 로드 시 타이핑 시작 ──

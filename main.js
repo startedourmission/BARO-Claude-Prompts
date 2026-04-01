@@ -209,25 +209,11 @@ function switchChapter(id) {
   const newChapter = document.getElementById(`chapter-${id}`);
   activeChapter.id = id;
 
-  // Phase 1: 기존 글자 계단식으로 지우기
-  const oldTexts = oldChapter.querySelectorAll('.prompt-text, .prompt-meta, .section-title');
-  const erasePromises = [];
+  // Phase 1: 한번에 지우기
+  oldChapter.classList.remove('active');
+  restoreTexts(oldChapter);
 
-  oldTexts.forEach((el, i) => {
-    const full = el.textContent;
-    erasePromises.push(new Promise(resolve => {
-      setTimeout(() => eraseText(el, full, resolve), i * STAGGER_DELAY);
-    }));
-  });
-
-  Promise.all(erasePromises).then(() => {
-    // 원문 복원 후 숨기기
-    oldTexts.forEach(el => {
-      const ch = chapters.find(c => oldChapter.id === `chapter-${c.id}`);
-      // textContent는 이미 빈 상태이므로 active만 제거
-    });
-    oldChapter.classList.remove('active');
-    restoreTexts(oldChapter);
+  {
 
     // Phase 2: 새 글자 계단식으로 타이핑
     const newTexts = newChapter.querySelectorAll('.prompt-text, .prompt-meta, .section-title');
@@ -245,7 +231,7 @@ function switchChapter(id) {
     Promise.all(typePromises).then(() => {
       transitioning = false;
     });
-  });
+  }
 }
 
 // 숨겨진 챕터의 텍스트를 원본으로 복원

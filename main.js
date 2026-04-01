@@ -90,6 +90,10 @@ function typeAll() {
 
     globalI++;
     if (!allDone) requestAnimationFrame(tick);
+    else {
+      const bookLink = document.getElementById('book-link');
+      if (bookLink) setTimeout(() => bookLink.classList.add('reveal'), 300);
+    }
   }
 
   requestAnimationFrame(tick);

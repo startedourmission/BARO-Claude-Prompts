@@ -48,15 +48,10 @@ body {
 .book-link {
   color: var(--muted);
   text-decoration: none;
-  text-decoration-line: underline;
-  text-decoration-style: dashed;
-  text-decoration-color: var(--muted);
-  text-underline-offset: 3px;
 }
 
 .book-link:hover {
   color: var(--ink);
-  text-decoration-color: var(--ink);
 }
 
 .hero-eyebrow a {

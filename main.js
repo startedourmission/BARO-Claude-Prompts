@@ -113,11 +113,8 @@ function updateNavScrollButtons() {
   const atStart = navInner.scrollLeft <= 1;
   const atEnd = navInner.scrollLeft + navInner.clientWidth >= navInner.scrollWidth - 1;
 
-  [navScrollPrev, navScrollNext].forEach(button => {
-    button.hidden = !hasOverflow;
-  });
-  navScrollPrev.disabled = atStart;
-  navScrollNext.disabled = atEnd;
+  navScrollPrev.disabled = !hasOverflow || atStart;
+  navScrollNext.disabled = !hasOverflow || atEnd;
 }
 
 function scrollNav(direction) {

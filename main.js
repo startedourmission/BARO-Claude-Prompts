@@ -31,10 +31,9 @@ const logoEl = document.getElementById('ascii-logo');
 
 // ── 페이지 로드 시 모든 텍스트 타이핑 ──
 function typeAll() {
-  // 느린 그룹: 히어로, 네비 (프레임당 1글자)
+  // 느린 그룹: 히어로 (프레임당 1글자)
   const slow = [
     ...document.querySelectorAll('.hero-title'),
-    ...document.querySelectorAll('.nav-pill'),
   ];
   // 빠른 그룹: 본문 (프레임당 18글자)
   const fast = [

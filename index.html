@@ -21,7 +21,15 @@
   </header>
 
   <nav class="nav">
-    <div class="wrap" id="nav-inner"></div>
+    <div class="nav-shell wrap">
+      <button class="nav-scroll-button nav-scroll-prev" type="button" aria-label="이전 메뉴 보기" aria-controls="nav-inner" hidden>
+        <span aria-hidden="true">←</span>
+      </button>
+      <div class="nav-list" id="nav-inner"></div>
+      <button class="nav-scroll-button nav-scroll-next" type="button" aria-label="다음 메뉴 보기" aria-controls="nav-inner" hidden>
+        <span aria-hidden="true">→</span>
+      </button>
+    </div>
   </nav>
 
   <main class="content">

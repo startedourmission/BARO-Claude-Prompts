@@ -3,6 +3,8 @@ import { chapters } from './data.js';
 const activeChapter = { id: '00' };
 const navInner = document.getElementById('nav-inner');
 const contentEl = document.getElementById('content');
+const navScrollPrev = document.querySelector('.nav-scroll-prev');
+const navScrollNext = document.querySelector('.nav-scroll-next');
 
 // ── ASCII 로고 ──
 const LOGO = `                   vlllr       1l1
@@ -90,7 +92,7 @@ function typeAll() {
 
     globalI++;
     if (!allDone) requestAnimationFrame(tick);
-    else {}
+    else updateNavScrollButtons();
   }
 
   requestAnimationFrame(tick);
@@ -105,6 +107,28 @@ chapters.forEach(ch => {
   btn.addEventListener('click', () => switchChapter(ch.id));
   navInner.appendChild(btn);
 });
+
+function updateNavScrollButtons() {
+  const hasOverflow = navInner.scrollWidth > navInner.clientWidth + 1;
+  const atStart = navInner.scrollLeft <= 1;
+  const atEnd = navInner.scrollLeft + navInner.clientWidth >= navInner.scrollWidth - 1;
+
+  [navScrollPrev, navScrollNext].forEach(button => {
+    button.hidden = !hasOverflow;
+  });
+  navScrollPrev.disabled = atStart;
+  navScrollNext.disabled = atEnd;
+}
+
+function scrollNav(direction) {
+  navInner.scrollBy({ left: direction * Math.max(180, navInner.clientWidth * 0.7), behavior: 'smooth' });
+}
+
+navScrollPrev.addEventListener('click', () => scrollNav(-1));
+navScrollNext.addEventListener('click', () => scrollNav(1));
+navInner.addEventListener('scroll', updateNavScrollButtons, { passive: true });
+window.addEventListener('resize', updateNavScrollButtons);
+requestAnimationFrame(updateNavScrollButtons);
 
 // ── Content ──
 chapters.forEach(ch => {
@@ -325,4 +349,3 @@ function inlineCopied(textEl, event) {
 
 // ── 페이지 로드 시 타이핑 시작 ──
 typeAll();
-

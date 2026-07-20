@@ -87,14 +87,43 @@ body {
   -webkit-backdrop-filter: blur(16px);
 }
 
-.nav .wrap {
+.nav-shell {
+  position: relative;
+  display: flex;
+  padding: 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.nav-list {
   display: flex;
   gap: 0;
   overflow-x: auto;
   scrollbar-width: none;
-  border-bottom: 1px solid var(--rule);
+  flex: 1;
+  padding: 0 24px;
+  scroll-behavior: smooth;
 }
-.nav .wrap::-webkit-scrollbar { display: none; }
+.nav-list::-webkit-scrollbar { display: none; }
+
+.nav-scroll-button {
+  align-self: stretch;
+  width: 42px;
+  flex: 0 0 42px;
+  border: 0;
+  background: #f6f0e6;
+  color: var(--ink);
+  font: 18px/1 "SF Mono", ui-monospace, monospace;
+  cursor: pointer;
+  transition: color 120ms, background 120ms;
+}
+
+.nav-scroll-button:hover:not(:disabled) { background: #ebe2d5; }
+.nav-scroll-button:disabled { color: var(--rule); cursor: default; }
+
+@media (max-width: 520px) {
+  .nav-list { padding: 0 12px; }
+  .nav-scroll-button { width: 36px; flex-basis: 36px; }
+}
 
 .nav-pill {
   flex-shrink: 0;
